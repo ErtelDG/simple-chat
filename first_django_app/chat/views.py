@@ -3,11 +3,16 @@ from django.shortcuts import render
 from .models import Chat, Message
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import UserCreationForm
 from django.http import JsonResponse
 from django.core import serializers
+from django.contrib.auth.models import User
+from django.shortcuts import render, redirect
 
 
 @login_required(login_url="/login/")
+
+# index view
 def index(request):
     """
     This is a view to render the chat html.
@@ -33,6 +38,7 @@ def index(request):
     return render(request, "chat/index.html", {"messages": chatMessages})
 
 
+# login view
 def login_view(request):
     redirect = request.GET.get("next")
     if request.method == "POST":
@@ -50,3 +56,18 @@ def login_view(request):
                 {"wrongPassword": True, "redirect": redirect},
             )
     return render(request, "auth/login.html", {"redirect": redirect})
+
+
+# signUp view
+def signUp_view(request):
+    if request.method == "POST":
+        print(request.POST.get("username")),
+        print(request.POST.get("password")),
+        print(request.POST.get("email")),
+        user = User.objects.create_user(
+            username=request.POST.get("username"),
+            password=request.POST.get("password"),
+            email=request.POST.get("email"),
+        )
+
+    return render(request, "signUp/signUp.html")
